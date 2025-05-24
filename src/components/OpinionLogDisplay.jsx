@@ -1,11 +1,14 @@
 import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, Paper } from './mui'; // Using barrel file
+import { Box, Typography, List, ListItem, ListItemText, Paper } from './mui';
+import { translations } from '../translations'; // Import translations
 
-function OpinionLogDisplay({ opinionLog, onLogEntrySelect }) {
+function OpinionLogDisplay({ opinionLog, onLogEntrySelect, selectedLanguage }) {
+  const currentTranslations = translations[selectedLanguage] || translations.English;
+
   if (!opinionLog || opinionLog.length === 0) {
     return (
       <Typography variant="caption" sx={{ mt: 2, display: 'block', textAlign: 'center' }}>
-        No opinions logged yet.
+        {currentTranslations.noRecentOpinions}
       </Typography>
     );
   }
@@ -13,7 +16,7 @@ function OpinionLogDisplay({ opinionLog, onLogEntrySelect }) {
   return (
     <Box sx={{ mt: 4 }}>
       <Typography variant="h6" gutterBottom>
-        Recent Opinions
+        {currentTranslations.recentOpinionsTitle}
       </Typography>
       <Paper elevation={2} sx={{ maxHeight: 300, overflow: 'auto' }}>
         <List dense>
@@ -26,7 +29,7 @@ function OpinionLogDisplay({ opinionLog, onLogEntrySelect }) {
             >
               <ListItemText
                 primary={entry.text}
-                secondary={`Logged: ${new Date(entry.timestamp).toLocaleString()}`}
+                secondary={`${currentTranslations.loggedAt}: ${new Date(entry.timestamp).toLocaleString()}`}
               />
             </ListItem>
           ))}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'; // Import axios
 // Import from our barrel file to avoid casing issues
 import { ThemeProvider, createTheme, CssBaseline, Container } from './components/mui';
+import { translations } from './translations'; // Import translations
 import OpinionInput from './components/OpinionInput';
 // ModeSelector is no longer needed
 import ResponseDisplay from './components/ResponseDisplay';
@@ -11,7 +12,8 @@ import './App.css';
 function App() {
   const [step, setStep] = useState('input');
   const [opinion, setOpinion] = useState('');
-  const [mode, setMode] = useState(null);
+  const [mode, setMode] = useState(null); // 'reinforce', 'challenge', 'neutral'
+  const [language, setLanguage] = useState('English'); // Default language
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
   const [opinionLog, setOpinionLog] = useState(() => {
@@ -42,8 +44,8 @@ function App() {
     }
   }, [opinionLog]);
 
-  // Combined handler for submitting opinion and selected mode
-  const handleOpinionAndModeSubmit = async (text, selectedMode) => {
+  // Combined handler for submitting opinion, selected mode, and language
+  const handleOpinionAndModeSubmit = async (text, selectedMode, selectedLang) => {
     setOpinion(text); // Set current opinion for processing
     setMode(selectedMode); // Set selected mode
     setStep('response'); // Move directly to response step
@@ -64,12 +66,12 @@ function App() {
     const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
     if (!apiKey) {
       console.error('OpenAI API key not found. Make sure VITE_OPENAI_API_KEY is set in your .env file.');
-      setResponse('Error: OpenAI API key not configured. Please contact support.');
+      setResponse(translations[language]?.apiKeyError || translations.English.apiKeyError);
       setLoading(false);
       return;
     }
 
-    let promptContent = `The user's opinion is: "${text}". `;
+    let promptContent = `The user's opinion is: "${text}". Please respond in ${selectedLang}. `;
     if (selectedMode === 'reinforce') {
       promptContent += 'Please provide points that reinforce this opinion and explain why it might be valid.';
     } else if (selectedMode === 'challenge') {
@@ -98,16 +100,16 @@ function App() {
       if (apiResponse.data.choices && apiResponse.data.choices.length > 0) {
         setResponse(apiResponse.data.choices[0].message.content);
       } else {
-        setResponse('Received an unexpected response from the AI.');
+        setResponse(translations[language]?.aiUnexpectedResponse || translations.English.aiUnexpectedResponse);
       }
     } catch (error) {
       console.error('Error calling OpenAI API:', error);
       if (error.response) {
-        setResponse(`Error: ${error.response.data.error?.message || 'Failed to get response from AI.'}`);
+        setResponse(`Error: ${error.response.data.error?.message || translations[language]?.aiResponseError || translations.English.aiResponseError}`);
       } else if (error.request) {
-        setResponse('Error: No response received from AI. Check your network connection.');
+        setResponse(translations[language]?.aiResponseError || translations.English.aiResponseError);
       } else {
-        setResponse('Error: Could not fetch AI response. Please try again.');
+        setResponse(translations[language]?.aiRequestError || translations.English.aiRequestError);
       }
     }
     setLoading(false);
@@ -140,9 +142,11 @@ function App() {
       <Container>
         {step === 'input' && 
           <OpinionInput 
-            onSubmitWithMode={handleOpinionAndModeSubmit} // Updated prop name and handler
+            onSubmitWithMode={handleOpinionAndModeSubmit} 
             opinionText={opinion} 
             onOpinionChange={setOpinion} 
+            selectedLanguage={language} // Pass current language
+            onLanguageChange={setLanguage} // Pass handler to update language
           />
         }
         {/* {step === 'mode' && <ModeSelector onSelect={handleModeSelect} />} ModeSelector step is removed */}
@@ -152,6 +156,7 @@ function App() {
             response={response}
             onReaction={handleReaction}
             onStartNewOpinion={handleStartNewOpinion} // Pass the new handler
+            selectedLanguage={language} // Pass current language
           />
         )}
         {/* Display the opinion log if there are any entries */}
@@ -159,6 +164,7 @@ function App() {
           <OpinionLogDisplay 
             opinionLog={opinionLog} 
             onLogEntrySelect={handleLogEntrySelect} // Pass the new handler
+            selectedLanguage={language} // Pass current language
           />
         }
       </Container>

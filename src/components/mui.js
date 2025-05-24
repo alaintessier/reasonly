@@ -12,7 +12,12 @@ export { default as TextField } from '@mui/material/TextField';
 export { default as Typography } from '@mui/material/Typography';
 export { default as List } from '@mui/material/List';
 export { default as ListItem } from '@mui/material/ListItem';
-export { default as ListItemText } from '@mui/material/ListItemText';
+export { default as ListItemText } from '@mui/material/ListItemText'; // Added for OpinionLogDisplay
+export { default as FormControl } from '@mui/material/FormControl'; // Added for OpinionInput language select
+export { default as InputLabel } from '@mui/material/InputLabel'; // Added for OpinionInput language select
+export { default as Select } from '@mui/material/Select'; // Added for OpinionInput language select
+export { default as MenuItem } from '@mui/material/MenuItem'; // Added for OpinionInput language select
+export { default as IconButton } from '@mui/material/IconButton'; // Added for ResponseDisplay reaction buttons
 
 // Theme related
 export { ThemeProvider, createTheme } from '@mui/material/styles';

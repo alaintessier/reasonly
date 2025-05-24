@@ -1,25 +1,25 @@
 import React from 'react';
-// Import from our barrel file to avoid casing issues
-import { TextField, Button, Box, Paper, Typography } from './mui';
+import { TextField, Button, Box, Paper, Typography, FormControl, InputLabel, Select, MenuItem } from './mui';
+import { translations } from '../translations'; // Import translations
 
-const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange }) => {
+const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange, selectedLanguage, onLanguageChange }) => {
   const handleModeSubmit = (mode) => {
     if (opinionText.trim()) {
-      onSubmitWithMode(opinionText, mode);
+      onSubmitWithMode(opinionText, mode, selectedLanguage);
     }
   };
 
   return (
     <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto', mt: 4 }}>
       <Typography variant="h5" gutterBottom>
-        Share Your Opinion
+        {translations[selectedLanguage]?.shareOpinionTitle || translations.English.shareOpinionTitle}
       </Typography>
       <TextField
         fullWidth
         multiline
         rows={4}
         variant="outlined"
-        placeholder="What's your opinion on this topic?"
+        placeholder={translations[selectedLanguage]?.opinionPlaceholder || translations.English.opinionPlaceholder}
         value={opinionText}
         onChange={(e) => onOpinionChange(e.target.value)}
         sx={{ mb: 2 }}
@@ -30,7 +30,7 @@ const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange }) => {
           onClick={() => handleModeSubmit('challenge')}
           disabled={!opinionText.trim()}
         >
-          Challenge Me
+          {translations[selectedLanguage]?.challengeButton || translations.English.challengeButton}
         </Button>
         <Button
           variant="contained"
@@ -38,9 +38,24 @@ const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange }) => {
           onClick={() => handleModeSubmit('reinforce')}
           disabled={!opinionText.trim()}
         >
-          Reinforce Me
+          {translations[selectedLanguage]?.reinforceButton || translations.English.reinforceButton}
         </Button>
       </Box>
+
+      <FormControl fullWidth sx={{ mt: 3 }}>
+        <InputLabel id="language-select-label">{translations[selectedLanguage]?.languageLabel || translations.English.languageLabel}</InputLabel>
+        <Select
+          labelId="language-select-label"
+          id="language-select"
+          value={selectedLanguage}
+          label="Language"
+          onChange={(e) => onLanguageChange(e.target.value)}
+        >
+          <MenuItem value="English">English</MenuItem>
+          <MenuItem value="French">Français</MenuItem>
+          <MenuItem value="Spanish">Español</MenuItem>
+        </Select>
+      </FormControl>
     </Paper>
   );
 };
