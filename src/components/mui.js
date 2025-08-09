@@ -17,10 +17,11 @@ export { default as FormControl } from '@mui/material/FormControl'; // Added for
 export { default as InputLabel } from '@mui/material/InputLabel'; // Added for OpinionInput language select
 export { default as Select } from '@mui/material/Select'; // Added for OpinionInput language select
 export { default as MenuItem } from '@mui/material/MenuItem'; // Added for OpinionInput language select
+export { default as Menu } from '@mui/material/Menu'; // Added for language menu
 export { default as IconButton } from '@mui/material/IconButton'; // Added for ResponseDisplay reaction buttons
 
 // Theme related
-export { ThemeProvider, createTheme } from '@mui/material/styles';
+export { ThemeProvider, createTheme, responsiveFontSizes } from '@mui/material/styles';
 
 // Icons
 export { default as AutorenewIcon } from '@mui/icons-material/Autorenew';
@@ -28,3 +29,6 @@ export { default as BalanceIcon } from '@mui/icons-material/Balance';
 export { default as SearchIcon } from '@mui/icons-material/Search';
 export { default as ThumbUpIcon } from '@mui/icons-material/ThumbUp';
 export { default as ThumbDownIcon } from '@mui/icons-material/ThumbDown';
+export { default as FactCheckIcon } from '@mui/icons-material/FactCheck';
+export { default as PsychologyIcon } from '@mui/icons-material/Psychology';
+export { default as LanguageIcon } from '@mui/icons-material/Language';

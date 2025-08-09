@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axiosxxx
+import axios from 'axios'; // Import axios
 // Import from our barrel file to avoid casing issues
-import { ThemeProvider, createTheme, CssBaseline, Container } from './components/mui';
+import { ThemeProvider, createTheme, CssBaseline, Container, Box, IconButton, Menu, MenuItem, Typography, responsiveFontSizes } from './components/mui';
+import { LanguageIcon } from './components/mui';
 import { translations } from './translations'; // Import translations
 import OpinionInput from './components/OpinionInput';
 // ModeSelector is no longer needed
@@ -19,6 +20,7 @@ function App() {
   const [language, setLanguage] = useState('English'); // Default language
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
   const [opinionLog, setOpinionLog] = useState(() => {
     try {
       const storedLog = localStorage.getItem('reasonlyOpinionLog');
@@ -29,14 +31,175 @@ function App() {
     }
   });
 
-  const theme = createTheme({
+  // Create a modern, responsive theme with a beautiful color palette
+  let theme = createTheme({
     palette: {
       mode: 'light',
       primary: {
-        main: '#0078d4',
+        main: '#6C63FF', // Modern purple as primary color
+        light: '#9C97FF',
+        dark: '#4641B7',
+        contrastText: '#FFFFFF'
       },
+      secondary: {
+        main: '#FF7C7C', // Coral red as secondary color
+        light: '#FF9E9E',
+        dark: '#E25F5F',
+        contrastText: '#FFFFFF'
+      },
+      background: {
+        default: '#F8F9FB', // Light gray background
+        paper: '#FFFFFF'
+      },
+      text: {
+        primary: '#2A2B3A', // Dark slate for primary text
+        secondary: '#5F6177' // Medium slate for secondary text
+      },
+      success: {
+        main: '#4CAF50',
+        light: '#81C784',
+        dark: '#388E3C',
+      },
+      warning: {
+        main: '#FFAE42',
+        light: '#FFD591',
+        dark: '#E09816',
+      },
+      error: {
+        main: '#FF5252',
+        light: '#FF8A8A',
+        dark: '#D32F2F',
+      }
     },
+    typography: {
+      fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+      h1: {
+        fontWeight: 700,
+        letterSpacing: '-0.01em'
+      },
+      h2: {
+        fontWeight: 700,
+        letterSpacing: '-0.01em'
+      },
+      h3: {
+        fontWeight: 600
+      },
+      h4: {
+        fontWeight: 600
+      },
+      h5: {
+        fontWeight: 600
+      },
+      h6: {
+        fontWeight: 600
+      },
+      subtitle1: {
+        fontWeight: 500
+      },
+      subtitle2: {
+        fontWeight: 500
+      },
+      body1: {
+        lineHeight: 1.6
+      },
+      button: {
+        fontWeight: 600,
+        textTransform: 'none'
+      }
+    },
+    shape: {
+      borderRadius: 12 // Rounded corners throughout the app
+    },
+    shadows: [
+      'none',
+      '0 2px 4px 0 rgba(0,0,0,0.05)',
+      '0 4px 8px 0 rgba(0,0,0,0.07)',
+      '0 8px 16px 0 rgba(0,0,0,0.07)',
+      '0 12px 24px 0 rgba(0,0,0,0.07)',
+      // Keep remaining shadow definitions
+      ...Array(20).fill('none').map((_, i) => {
+        const intensity = (i + 5) * 0.01;
+        return `0 ${i * 2}px ${i * 4}px rgba(0,0,0,${intensity})`;
+      })
+    ],
+    components: {
+      // Style overrides for specific MUI components
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            padding: '10px 22px',
+            boxShadow: '0 4px 8px 0 rgba(0,0,0,0.1)'
+          },
+          contained: {
+            '&:hover': {
+              boxShadow: '0 8px 16px 0 rgba(0,0,0,0.1)',
+              transform: 'translateY(-1px)'
+            }
+          },
+          outlined: {
+            borderWidth: '2px',
+            '&:hover': {
+              borderWidth: '2px'
+            }
+          }
+        }
+      },
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                borderWidth: '1px'
+              },
+              '&:hover fieldset': {
+                borderWidth: '2px'
+              },
+              '&.Mui-focused fieldset': {
+                borderWidth: '2px'
+              }
+            }
+          }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            boxShadow: '0 8px 24px 0 rgba(0,0,0,0.07)',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: '0 12px 32px 0 rgba(0,0,0,0.1)'
+            }
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            boxShadow: '0 4px 16px 0 rgba(0,0,0,0.05)'
+          }
+        }
+      },
+      MuiContainer: {
+        styleOverrides: {
+          root: {
+            paddingTop: '24px',
+            paddingBottom: '24px'
+          }
+        }
+      },
+      MuiSelect: {
+        styleOverrides: {
+          root: {
+            borderRadius: '12px'
+          }
+        }
+      }
+    }
   });
+  
+  // Make typography responsive
+  theme = responsiveFontSizes(theme);
 
   // Effect to save opinion log to localStorage whenever it changes
   useEffect(() => {
@@ -142,35 +305,98 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container>
-        {step === 'input' && 
-          <OpinionInput 
-            onSubmitWithMode={handleOpinionAndModeSubmit} 
-            opinionText={opinion} 
-            onOpinionChange={setOpinion} 
-            selectedLanguage={language} // Pass current language
-            onLanguageChange={setLanguage} // Pass handler to update language
-          />
-        }
-        {/* {step === 'mode' && <ModeSelector onSelect={handleModeSelect} />} ModeSelector step is removed */}
-        {step === 'response' && (
-          <ResponseDisplay
-            loading={loading}
-            response={response}
-            onReaction={handleReaction}
-            onStartNewOpinion={handleStartNewOpinion} // Pass the new handler
-            selectedLanguage={language} // Pass current language
-          />
-        )}
-        {/* Display the opinion log if there are any entries */}
-        {opinionLog.length > 0 && 
+      <Box sx={{ 
+        backgroundColor: 'background.default', 
+        minHeight: '100vh',
+        width: '100vw',
+        maxWidth: '100%',
+        pt: 2
+      }}>
+        {/* Logo Header */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          px: 3,
+          mb: 2,
+          width: '100%'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%'
+          }}>
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              '&:hover': {
+                opacity: 0.9,
+                cursor: 'pointer'
+              }
+            }} onClick={handleStartNewOpinion}>
+              <img 
+                src="/reasonly-logo.svg" 
+                alt="Reasonly Logo" 
+                style={{ height: '40px', marginRight: '10px' }} 
+              />
+            </Box>
+            
+            <Box>
+              <IconButton 
+                color="primary" 
+                onClick={(e) => setLanguageMenuAnchor(e.currentTarget)}
+                title={translations[language]?.languageLabel || translations.English.languageLabel}
+                sx={{ 
+                  border: '1px solid', 
+                  borderColor: 'primary.main',
+                  p: 0.8,
+                }}
+              >
+                <LanguageIcon fontSize="small" />
+              </IconButton>
+              <Menu
+                anchorEl={languageMenuAnchor}
+                open={Boolean(languageMenuAnchor)}
+                onClose={() => setLanguageMenuAnchor(null)}
+              >
+                <MenuItem onClick={() => { setLanguage('English'); setLanguageMenuAnchor(null); }}>English</MenuItem>
+                <MenuItem onClick={() => { setLanguage('French'); setLanguageMenuAnchor(null); }}>Français</MenuItem>
+                <MenuItem onClick={() => { setLanguage('Spanish'); setLanguageMenuAnchor(null); }}>Español</MenuItem>
+              </Menu>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box sx={{ width: '100%', px: { xs: 2, sm: 3, md: 4 } }}>
+          {step === 'input' && (
+            <OpinionInput
+              onSubmitWithMode={handleOpinionAndModeSubmit}
+              opinionText={opinion}
+              onOpinionChange={setOpinion}
+              selectedLanguage={language}
+            />
+          )}
+
+          {loading && <ResponseDisplay loading={loading} selectedLanguage={language} />}
+
+          {step === 'response' && !loading && (
+            <ResponseDisplay
+              loading={loading}
+              response={response}
+              onReaction={handleReaction}
+              onStartNewOpinion={handleStartNewOpinion}
+              selectedLanguage={language}
+            />
+          )}
+
+          {/* Always show OpinionLogDisplay, it has internal handling for empty state */}
           <OpinionLogDisplay 
             opinionLog={opinionLog} 
-            onLogEntrySelect={handleLogEntrySelect} // Pass the new handler
-            selectedLanguage={language} // Pass current language
+            onLogEntrySelect={handleLogEntrySelect} 
+            selectedLanguage={language} 
           />
-        }
-      </Container>
+        </Box>
+      </Box>
     </ThemeProvider>
   )
 }

@@ -14,7 +14,7 @@ function OpinionLogDisplay({ opinionLog, onLogEntrySelect, selectedLanguage }) {
   }
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 4, width: '100%' }}>
       <Typography variant="h6" gutterBottom>
         {currentTranslations.recentOpinionsTitle}
       </Typography>

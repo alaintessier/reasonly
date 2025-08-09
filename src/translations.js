@@ -1,6 +1,6 @@
 export const translations = {
   English: {
-    shareOpinionTitle: "Share Your Opinion",
+    shareOpinionTitle: "Statement",
     opinionPlaceholder: "Provide an opinion",
     challengeButton: "Challenge Me",
     reinforceButton: "Reinforce Me",
@@ -21,7 +21,7 @@ export const translations = {
     weakButton: "This was weak"
   },
   French: {
-    shareOpinionTitle: "Partagez Votre Opinion",
+    shareOpinionTitle: "Déclaration",
     opinionPlaceholder: "Donnez votre avis",
     challengeButton: "Mettez-Moi Au Défi",
     reinforceButton: "Renforcez-Moi",
@@ -42,7 +42,7 @@ export const translations = {
     weakButton: "C'était faible"
   },
   Spanish: {
-    shareOpinionTitle: "Comparte Tu Opinión",
+    shareOpinionTitle: "Declaración",
     opinionPlaceholder: "Da tu opinión",
     challengeButton: "Desafíame",
     reinforceButton: "Refuérzame",
