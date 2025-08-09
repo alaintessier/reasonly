@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios
+import axios from 'axios'; // Import axiosxxx
 // Import from our barrel file to avoid casing issues
 import { ThemeProvider, createTheme, CssBaseline, Container } from './components/mui';
 import { translations } from './translations'; // Import translations
@@ -8,6 +8,9 @@ import OpinionInput from './components/OpinionInput';
 import ResponseDisplay from './components/ResponseDisplay';
 import OpinionLogDisplay from './components/OpinionLogDisplay'; // Import the new component
 import './App.css';
+
+
+
 
 function App() {
   const [step, setStep] = useState('input');
