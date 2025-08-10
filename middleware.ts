@@ -3,14 +3,14 @@ import type { NextRequest } from 'next/server'
 
 // Add your whitelisted IPs here
 const WHITELISTED_IPS = [
-  '192.168.1.1',  // Example IP - replace with your IPs
-  '10.0.0.1',      // Add as many as needed
-  // Add your actual IP addresses here
+  '74.126.100.235',  // Your current public IP
+  // Add more IPs below if needed (office, home, etc.)
 ]
 
 export function middleware(request: NextRequest) {
-  // Get the client IP
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown'
+  // Get the client IP from headers
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const ip = forwardedFor ? forwardedFor.split(',')[0].trim() : request.headers.get('x-real-ip') || 'unknown'
   
   // Check if IP is whitelisted
   if (!WHITELISTED_IPS.includes(ip)) {
