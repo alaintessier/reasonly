@@ -20,10 +20,39 @@ body {
   overflow-x: hidden;
 }
 
-.MuiPaper-root {
+/* Apply full width to all Paper components except Menu papers */
+.MuiPaper-root:not(.MuiMenu-paper) {
   width: 100% !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
+}
+
+/* Target MUI Menu paper specifically - this overrides the generic rule */
+div[role="presentation"] .MuiPaper-root.MuiMenu-paper,
+div[role="presentation"] .MuiPaper-root.MuiPopover-paper {
+  width: fit-content !important;
+  min-width: 120px !important;
+  max-width: 200px !important;
+}
+
+/* Fix menu items to be properly aligned and sized */
+.MuiList-root.MuiMenu-list,
+.MuiList-root {
+  width: fit-content !important;
+}
+
+.MuiMenuItem-root,
+.MuiListItemButton-root {
+  width: auto !important;
+  min-height: 36px !important;
+}
+
+/* Force language menu position */
+.MuiMenu-root#language-menu .MuiPaper-root {
+  position: absolute !important;
+  right: 16px !important;
+  left: auto !important;
+  transform-origin: top right !important;
 }

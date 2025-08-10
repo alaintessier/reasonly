@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios'; // Import axios
 // Import from our barrel file to avoid casing issues
-import { ThemeProvider, createTheme, CssBaseline, Container, Box, IconButton, Menu, MenuItem, Typography, responsiveFontSizes } from './components/mui';
+import { ThemeProvider, createTheme, CssBaseline, Container, Box, IconButton, Menu, MenuItem, Paper, Typography, responsiveFontSizes } from './components/mui';
 import { LanguageIcon } from './components/mui';
 import { translations } from './translations'; // Import translations
 import OpinionInput from './components/OpinionInput';
 // ModeSelector is no longer needed
 import ResponseDisplay from './components/ResponseDisplay';
 import OpinionLogDisplay from './components/OpinionLogDisplay'; // Import the new component
+
+// Import the logo
+import reasonlyLogo from './assets/reasonly2.png';
+
 import './App.css';
 
 
@@ -30,6 +34,9 @@ function App() {
       return [];
     }
   });
+  
+  // Get translations for the current language
+  const currentTranslations = translations[language] || translations.English;
 
   // Create a modern, responsive theme with a beautiful color palette
   let theme = createTheme({
@@ -320,7 +327,7 @@ function App() {
           mb: 2,
           width: '100%'
         }}>
-          <Box sx={{ 
+          <Box sx={{
             display: 'flex', 
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -329,40 +336,92 @@ function App() {
             <Box sx={{
               display: 'flex',
               alignItems: 'center',
-              '&:hover': {
-                opacity: 0.9,
-                cursor: 'pointer'
-              }
-            }} onClick={handleStartNewOpinion}>
-              <img 
-                src="/reasonly-logo.svg" 
-                alt="Reasonly Logo" 
-                style={{ height: '40px', marginRight: '10px' }} 
-              />
+            }}>
+              <Box sx={{ mr: 2 }}>
+                <img 
+                  src={reasonlyLogo} 
+                  alt="Reasonly Logo" 
+                  style={{ height: '80px', cursor: 'pointer' }} 
+                  onClick={handleStartNewOpinion}
+                />
+              </Box>
             </Box>
             
-            <Box>
+            <Box sx={{ position: 'relative', marginRight: 5 }}>
               <IconButton 
                 color="primary" 
                 onClick={(e) => setLanguageMenuAnchor(e.currentTarget)}
-                title={translations[language]?.languageLabel || translations.English.languageLabel}
+                title={translations[language]?.languageSelector || translations.English.languageSelector}
                 sx={{ 
                   border: '1px solid', 
                   borderColor: 'primary.main',
-                  p: 0.8,
+                  p: 1.2,
                 }}
               >
-                <LanguageIcon fontSize="small" />
+                <LanguageIcon fontSize="medium" />
               </IconButton>
-              <Menu
-                anchorEl={languageMenuAnchor}
-                open={Boolean(languageMenuAnchor)}
-                onClose={() => setLanguageMenuAnchor(null)}
-              >
-                <MenuItem onClick={() => { setLanguage('English'); setLanguageMenuAnchor(null); }}>English</MenuItem>
-                <MenuItem onClick={() => { setLanguage('French'); setLanguageMenuAnchor(null); }}>Français</MenuItem>
-                <MenuItem onClick={() => { setLanguage('Spanish'); setLanguageMenuAnchor(null); }}>Español</MenuItem>
-              </Menu>
+              
+              {/* Custom dropdown menu */}
+              {Boolean(languageMenuAnchor) && (
+                <Paper 
+                  sx={{ 
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    mt: 0.5,
+                    minWidth: '120px',
+                    width: 'auto',
+                    boxShadow: 3,
+                    zIndex: 1300,
+                    borderRadius: 1,
+                  }}
+                >
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      p: 0,
+                    }}
+                  >
+                    <Box 
+                      sx={{ 
+                        px: 2,
+                        py: 1,
+                        whiteSpace: 'nowrap',
+                        '&:hover': { bgcolor: 'action.hover' },
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => { setLanguage('English'); setLanguageMenuAnchor(null); }}
+                    >
+                      English
+                    </Box>
+                    <Box 
+                      sx={{ 
+                        px: 2,
+                        py: 1,
+                        whiteSpace: 'nowrap',
+                        '&:hover': { bgcolor: 'action.hover' },
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => { setLanguage('French'); setLanguageMenuAnchor(null); }}
+                    >
+                      Français
+                    </Box>
+                    <Box 
+                      sx={{ 
+                        px: 2,
+                        py: 1,
+                        whiteSpace: 'nowrap',
+                        '&:hover': { bgcolor: 'action.hover' },
+                        cursor: 'pointer', 
+                      }}
+                      onClick={() => { setLanguage('Spanish'); setLanguageMenuAnchor(null); }}
+                    >
+                      Español
+                    </Box>
+                  </Box>
+                </Paper>
+              )}
             </Box>
           </Box>
         </Box>
@@ -402,3 +461,4 @@ function App() {
 }
 
 export default App
+

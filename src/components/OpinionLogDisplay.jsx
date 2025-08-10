@@ -18,7 +18,7 @@ function OpinionLogDisplay({ opinionLog, onLogEntrySelect, selectedLanguage }) {
       <Typography variant="h6" gutterBottom>
         {currentTranslations.recentOpinionsTitle}
       </Typography>
-      <Paper elevation={2} sx={{ maxHeight: 300, overflow: 'auto' }}>
+      <Paper elevation={2} sx={{ maxHeight: 180, overflow: 'auto' }}>
         <List dense>
           {opinionLog.map((entry) => (
             <ListItem 

@@ -61,7 +61,7 @@ const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange, selected
       <TextField
         fullWidth
         multiline
-        rows={4}
+        rows={6}
         variant="outlined"
         placeholder={translations[selectedLanguage]?.opinionPlaceholder || translations.English.opinionPlaceholder}
         value={opinionText}

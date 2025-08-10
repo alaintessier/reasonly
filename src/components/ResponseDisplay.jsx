@@ -1,7 +1,7 @@
 import React from 'react';
 // Import from our barrel file to avoid casing issues
 import { Paper, Typography, Box, CircularProgress, Button, IconButton } from './mui';
-import { ThumbUpIcon, ThumbDownIcon, AutorenewIcon } from './mui';
+import { ThumbUpIcon, ThumbDownIcon, ArrowBackIcon } from './mui';
 import { translations } from '../translations';
 
 const ResponseDisplay = ({ loading, response, onReaction, onStartNewOpinion, selectedLanguage }) => {
@@ -65,7 +65,7 @@ const ResponseDisplay = ({ loading, response, onReaction, onStartNewOpinion, sel
             size="small" 
             color="info"
             onClick={onStartNewOpinion}
-            title={currentTranslations.startNewOpinionButton}
+            title={currentTranslations.backButton || "Back"}
             sx={{ 
               ml: 1, 
               border: '1px solid', 
@@ -77,7 +77,7 @@ const ResponseDisplay = ({ loading, response, onReaction, onStartNewOpinion, sel
               } 
             }}
           >
-            <AutorenewIcon fontSize="small" />
+            <ArrowBackIcon fontSize="small" />
           </IconButton>
         </Box>
       </Box>
