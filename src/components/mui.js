@@ -21,9 +21,16 @@ export { default as MenuItem } from '@mui/material/MenuItem'; // Added for Opini
 export { default as Menu } from '@mui/material/Menu'; // Added for language menu
 export { default as Popover } from '@mui/material/Popover'; // Added for language menu
 export { default as IconButton } from '@mui/material/IconButton'; // Added for ResponseDisplay reaction buttons
+export { default as Dialog } from '@mui/material/Dialog'; // Added for profile dialog
+export { default as DialogActions } from '@mui/material/DialogActions'; // Added for profile dialog
+export { default as DialogContent } from '@mui/material/DialogContent'; // Added for profile dialog
+export { default as DialogContentText } from '@mui/material/DialogContentText'; // Added for profile dialog
+export { default as DialogTitle } from '@mui/material/DialogTitle'; // Added for profile dialog
 
 // Theme related
-export { ThemeProvider, createTheme, responsiveFontSizes } from '@mui/material/styles';
+export { ThemeProvider } from '@mui/material/styles';
+export { createTheme } from '@mui/material';
+export { responsiveFontSizes } from '@mui/material/styles';
 
 // Icons
 export { default as ArrowBackIcon } from '@mui/icons-material/ArrowBack';
@@ -35,3 +42,4 @@ export { default as ThumbDownIcon } from '@mui/icons-material/ThumbDown';
 export { default as FactCheckIcon } from '@mui/icons-material/FactCheck';
 export { default as PsychologyIcon } from '@mui/icons-material/Psychology';
 export { default as LanguageIcon } from '@mui/icons-material/Language';
+export { default as AccountCircleIcon } from '@mui/icons-material/AccountCircle';

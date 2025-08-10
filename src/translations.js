@@ -19,7 +19,15 @@ export const translations = {
     aiRequestError: "Error: Could not fetch AI response. Please try again.",
     apiKeyError: "Error: OpenAI API key not configured. Please contact support.",
     helpfulButton: "This was helpful",
-    weakButton: "This was weak"
+    weakButton: "This was weak",
+    // Profile related translations
+    profileSettings: "Profile Settings",
+    profileDescription: "Your profile information will be saved locally on your device.",
+    firstName: "First Name",
+    preferredLanguage: "Preferred Language",
+    save: "Save",
+    cancel: "Cancel",
+    languageSelector: "Language Selector"
   },
   French: {
     shareOpinionTitle: "Déclaration",
@@ -39,6 +47,14 @@ export const translations = {
     aiUnexpectedResponse: "Réponse inattendue reçue de l'IA.",
     aiNetworkError: "Erreur : Aucune réponse reçue de l'IA. Vérifiez votre connexion réseau.",
     aiRequestError: "Erreur : Impossible de récupérer la réponse de l'IA. Veuillez réessayer.",
+    // Profile related translations
+    profileSettings: "Paramètres du Profil",
+    profileDescription: "Vos informations de profil seront enregistrées localement sur votre appareil.",
+    firstName: "Prénom",
+    preferredLanguage: "Langue Préférée",
+    save: "Enregistrer",
+    cancel: "Annuler",
+    languageSelector: "Sélecteur de Langue",
     apiKeyError: "Erreur : Clé API OpenAI non configurée. Veuillez contacter le support.",
     helpfulButton: "C'était utile",
     weakButton: "C'était faible"
@@ -63,6 +79,14 @@ export const translations = {
     aiRequestError: "Error: No se pudo obtener la respuesta de la IA. Por favor, inténtelo de nuevo.",
     apiKeyError: "Error: Clave API de OpenAI no configurada. Por favor, contacte al soporte.",
     helpfulButton: "Esto fue útil",
-    weakButton: "Esto fue débil"
+    weakButton: "Esto fue débil",
+    // Profile related translations
+    profileSettings: "Configuración de Perfil",
+    profileDescription: "Su información de perfil se guardará localmente en su dispositivo.",
+    firstName: "Nombre",
+    preferredLanguage: "Idioma Preferido",
+    save: "Guardar",
+    cancel: "Cancelar",
+    languageSelector: "Selector de Idioma"
   }
 };

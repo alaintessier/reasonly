@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios'; // Import axios
-// Import from our barrel file to avoid casing issues
-import { ThemeProvider, createTheme, CssBaseline, Container, Box, IconButton, Menu, MenuItem, Paper, Typography, responsiveFontSizes } from './components/mui';
-import { LanguageIcon } from './components/mui';
+// Direct import for createTheme to fix TypeError
+import { createTheme } from '@mui/material';
+// Other MUI imports from our barrel file
+import { ThemeProvider, CssBaseline, Container, Box, IconButton, Paper, Typography, 
+  responsiveFontSizes, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button } from './components/mui';
+import { AccountCircleIcon } from './components/mui';
 import { translations } from './translations'; // Import translations
 import OpinionInput from './components/OpinionInput';
 // ModeSelector is no longer needed
@@ -24,7 +27,25 @@ function App() {
   const [language, setLanguage] = useState('English'); // Default language
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
-  const [languageMenuAnchor, setLanguageMenuAnchor] = useState(null);
+  // Profile state variables
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [userName, setUserName] = useState(() => {
+    try {
+      return localStorage.getItem('reasonlyUserName') || '';
+    } catch (error) {
+      console.error("Failed to load user name from localStorage:", error);
+      return '';
+    }
+  });
+  const [userPreferredLanguage, setUserPreferredLanguage] = useState(() => {
+    try {
+      return localStorage.getItem('reasonlyUserLanguage') || 'English';
+    } catch (error) {
+      console.error("Failed to load user language preference from localStorage:", error);
+      return 'English';
+    }
+  });
+
   const [opinionLog, setOpinionLog] = useState(() => {
     try {
       const storedLog = localStorage.getItem('reasonlyOpinionLog');
@@ -217,6 +238,31 @@ function App() {
     }
   }, [opinionLog]);
 
+  // Effect to save user profile data to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('reasonlyUserName', userName);
+    } catch (error) {
+      console.error("Failed to save user name to localStorage:", error);
+    }
+  }, [userName]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('reasonlyUserLanguage', userPreferredLanguage);
+      // Also update current language when preferred language changes
+      setLanguage(userPreferredLanguage);
+    } catch (error) {
+      console.error("Failed to save user language preference to localStorage:", error);
+    }
+  }, [userPreferredLanguage]);
+
+  // Function to handle profile dialog
+  const handleProfileSave = () => {
+    setProfileDialogOpen(false);
+    // User preferences are automatically saved via the useEffect hooks
+  };
+
   // Combined handler for submitting opinion, selected mode, and language
   const handleOpinionAndModeSubmit = async (text, selectedMode, selectedLang) => {
     setOpinion(text); // Set current opinion for processing
@@ -328,10 +374,12 @@ function App() {
         pt: 2
       }}>
         {/* Logo Header */}
-        <Box sx={{ 
-          display: 'flex', 
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          px: 3,
+          p: 2,
+          pb: 0,
           mb: 2,
           width: '100%'
         }}>
@@ -339,102 +387,100 @@ function App() {
             display: 'flex', 
             alignItems: 'center',
             justifyContent: 'space-between',
-            width: '100%'
+            width: '100%',
+            px: { xs: 2, sm: 3, md: 4 },
+            maxWidth: '1200px',
+            mx: 'auto'
           }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-            }}>
-              <Box sx={{ mr: 2 }}>
-                <img 
-                  src={reasonlyLogo} 
-                  alt="Reasonly Logo" 
-                  style={{ height: '80px', cursor: 'pointer' }} 
-                  onClick={handleStartNewOpinion}
-                />
-              </Box>
+            {/* Logo on the left */}
+            <Box>
+              <img 
+                src={reasonlyLogo} 
+                alt="Reasonly Logo" 
+                style={{ height: '80px', cursor: 'pointer' }} 
+                onClick={handleStartNewOpinion}
+              />
             </Box>
             
-            <Box sx={{ position: 'relative', marginRight: 5 }}>
+            {/* Profile Button on the right */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              {/* Profile Button */}
               <IconButton 
                 color="primary" 
-                onClick={(e) => setLanguageMenuAnchor(e.currentTarget)}
-                title={translations[language]?.languageSelector || translations.English.languageSelector}
+                onClick={() => setProfileDialogOpen(true)}
+                title={translations[language]?.profileSettings || "Profile Settings"}
                 sx={{ 
                   border: '1px solid', 
                   borderColor: 'primary.main',
                   p: 1.2,
                 }}
               >
-                <LanguageIcon fontSize="medium" />
+                <AccountCircleIcon fontSize="medium" />
               </IconButton>
               
-              {/* Custom dropdown menu */}
-              {Boolean(languageMenuAnchor) && (
-                <Paper 
-                  sx={{ 
-                    position: 'absolute',
-                    top: '100%',
-                    right: 0,
-                    mt: 0.5,
-                    minWidth: '120px',
-                    width: 'auto',
-                    boxShadow: 3,
-                    zIndex: 1300,
-                    borderRadius: 1,
-                  }}
-                >
-                  <Box 
-                    sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      p: 0,
-                    }}
-                  >
-                    <Box 
-                      sx={{ 
-                        px: 2,
-                        py: 1,
-                        whiteSpace: 'nowrap',
-                        '&:hover': { bgcolor: 'action.hover' },
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => { setLanguage('English'); setLanguageMenuAnchor(null); }}
-                    >
-                      English
-                    </Box>
-                    <Box 
-                      sx={{ 
-                        px: 2,
-                        py: 1,
-                        whiteSpace: 'nowrap',
-                        '&:hover': { bgcolor: 'action.hover' },
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => { setLanguage('French'); setLanguageMenuAnchor(null); }}
-                    >
-                      Français
-                    </Box>
-                    <Box 
-                      sx={{ 
-                        px: 2,
-                        py: 1,
-                        whiteSpace: 'nowrap',
-                        '&:hover': { bgcolor: 'action.hover' },
-                        cursor: 'pointer', 
-                      }}
-                      onClick={() => { setLanguage('Spanish'); setLanguageMenuAnchor(null); }}
-                    >
-                      Español
-                    </Box>
+              {/* Profile Dialog */}
+              <Dialog
+                open={profileDialogOpen}
+                onClose={() => setProfileDialogOpen(false)}
+                aria-labelledby="profile-dialog-title"
+              >
+                <DialogTitle id="profile-dialog-title">
+                  {translations[language]?.profileSettings || "Profile Settings"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText sx={{ mb: 2 }}>
+                    {translations[language]?.profileDescription || "Your profile information will be saved locally on your device."}
+                  </DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label={translations[language]?.firstName || "First Name"}
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    {translations[language]?.preferredLanguage || "Preferred Language"}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {['English', 'French', 'Spanish'].map((lang) => (
+                      <Box 
+                        key={lang}
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          p: 1,
+                          borderRadius: 1,
+                          border: '1px solid',
+                          borderColor: userPreferredLanguage === lang ? 'primary.main' : 'divider',
+                          bgcolor: userPreferredLanguage === lang ? 'action.selected' : 'transparent',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => setUserPreferredLanguage(lang)}
+                      >
+                        {lang === 'English' ? 'English' : lang === 'French' ? 'Français' : 'Español'}
+                      </Box>
+                    ))}
                   </Box>
-                </Paper>
-              )}
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => setProfileDialogOpen(false)} color="inherit">
+                    {translations[language]?.cancel || "Cancel"}
+                  </Button>
+                  <Button onClick={handleProfileSave} color="primary">
+                    {translations[language]?.save || "Save"}
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </Box>
           </Box>
         </Box>
 
-        <Box sx={{ width: '100%', px: { xs: 2, sm: 3, md: 4 } }}>
+        <Box sx={{ width: '100%', px: { xs: 2, sm: 3, md: 4 }, maxWidth: '1200px', mx: 'auto' }}>
           {step === 'input' && (
             <OpinionInput
               onSubmitWithMode={handleOpinionAndModeSubmit}
