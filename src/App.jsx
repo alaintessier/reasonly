@@ -259,8 +259,13 @@ function App() {
 
   // Function to handle profile dialog
   const handleProfileSave = () => {
-    setProfileDialogOpen(false);
     // User preferences are automatically saved via the useEffect hooks
+    // Just mark the dialog as closed
+    setProfileDialogOpen(false);
+  };
+  
+  const handleProfileCancel = () => {
+    setProfileDialogOpen(false);
   };
 
   // Combined handler for submitting opinion, selected mode, and language
@@ -418,64 +423,101 @@ function App() {
                 <AccountCircleIcon fontSize="medium" />
               </IconButton>
               
-              {/* Profile Dialog */}
-              <Dialog
-                open={profileDialogOpen}
-                onClose={() => setProfileDialogOpen(false)}
-                aria-labelledby="profile-dialog-title"
-              >
-                <DialogTitle id="profile-dialog-title">
-                  {translations[language]?.profileSettings || "Profile Settings"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText sx={{ mb: 2 }}>
-                    {translations[language]?.profileDescription || "Your profile information will be saved locally on your device."}
-                  </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label={translations[language]?.firstName || "First Name"}
-                    type="text"
-                    fullWidth
-                    variant="outlined"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    sx={{ mb: 2 }}
-                  />
-                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    {translations[language]?.preferredLanguage || "Preferred Language"}
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {['English', 'French', 'Spanish'].map((lang) => (
-                      <Box 
-                        key={lang}
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          p: 1,
-                          borderRadius: 1,
-                          border: '1px solid',
-                          borderColor: userPreferredLanguage === lang ? 'primary.main' : 'divider',
-                          bgcolor: userPreferredLanguage === lang ? 'action.selected' : 'transparent',
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => setUserPreferredLanguage(lang)}
+              {/* Custom Profile Modal */}
+              {profileDialogOpen && (
+                <Box
+                  sx={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1300,
+                  }}
+                  onClick={handleProfileCancel}
+                >
+                  <Paper
+                    sx={{
+                      width: '100%',
+                      maxWidth: 500,
+                      p: 3,
+                      m: 2,
+                      maxHeight: '90vh',
+                      overflowY: 'auto'
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    elevation={6}
+                  >
+                    {/* Title */}
+                    <Typography variant="h6" component="h2" gutterBottom>
+                      {translations[language]?.profileSettings || "Profile Settings"}
+                    </Typography>
+                    
+                    {/* Description */}
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {translations[language]?.profileDescription || "Your profile information will be saved locally on your device."}
+                    </Typography>
+                    
+                    {/* Name Field */}
+                    <TextField
+                      margin="dense"
+                      id="name"
+                      label={translations[language]?.firstName || "First Name"}
+                      type="text"
+                      fullWidth
+                      variant="outlined"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      sx={{ mb: 2 }}
+                    />
+                    
+                    {/* Language Selection */}
+                    <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                      {translations[language]?.preferredLanguage || "Preferred Language"}
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 3 }}>
+                      {['English', 'French', 'Spanish'].map((lang) => (
+                        <Box 
+                          key={lang} 
+                          sx={{ 
+                            p: 2, 
+                            border: '1px solid',
+                            borderColor: userPreferredLanguage === lang ? 'primary.main' : 'grey.300',
+                            borderRadius: 1,
+                            backgroundColor: userPreferredLanguage === lang ? 'primary.light' : 'background.paper',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              borderColor: 'primary.main',
+                              backgroundColor: userPreferredLanguage === lang ? 'primary.light' : 'background.paper',
+                            }
+                          }}
+                          onClick={() => setUserPreferredLanguage(lang)}
+                        >
+                          {lang}
+                        </Box>
+                      ))}
+                    </Box>
+                    
+                    {/* Buttons */}
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                      <Button onClick={handleProfileCancel} color="inherit">
+                        {translations[language]?.cancel || "Cancel"}
+                      </Button>
+                      <Button 
+                        onClick={handleProfileSave} 
+                        color="primary"
+                        variant="contained"
                       >
-                        {lang === 'English' ? 'English' : lang === 'French' ? 'Français' : 'Español'}
-                      </Box>
-                    ))}
-                  </Box>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setProfileDialogOpen(false)} color="inherit">
-                    {translations[language]?.cancel || "Cancel"}
-                  </Button>
-                  <Button onClick={handleProfileSave} color="primary">
-                    {translations[language]?.save || "Save"}
-                  </Button>
-                </DialogActions>
-              </Dialog>
+                        {translations[language]?.save || "Save"}
+                      </Button>
+                    </Box>
+                  </Paper>
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
