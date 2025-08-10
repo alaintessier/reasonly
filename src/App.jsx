@@ -45,6 +45,15 @@ function App() {
       return 'English';
     }
   });
+  // API Key state
+  const [userApiKey, setUserApiKey] = useState(() => {
+    try {
+      return localStorage.getItem('reasonlyApiKey') || '';
+    } catch (error) {
+      console.error('Error reading API key from localStorage:', error);
+      return '';
+    }
+  });
 
   const [opinionLog, setOpinionLog] = useState(() => {
     try {
@@ -257,6 +266,16 @@ function App() {
     }
   }, [userPreferredLanguage]);
 
+  useEffect(() => {
+    try {
+      if (userApiKey) {
+        localStorage.setItem('reasonlyApiKey', userApiKey);
+      }
+    } catch (error) {
+      console.error("Failed to save API key to localStorage:", error);
+    }
+  }, [userApiKey]);
+
   // Function to handle profile dialog
   const handleProfileSave = () => {
     // User preferences are automatically saved via the useEffect hooks
@@ -287,11 +306,13 @@ function App() {
     });
 
     // API Call Logic (moved from former handleModeSelect)
-    const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+    // First try to use user-provided API key, then fall back to environment variable
+    const apiKey = userApiKey || import.meta.env.VITE_OPENAI_API_KEY;
     if (!apiKey) {
-      console.error('OpenAI API key not found. Make sure VITE_OPENAI_API_KEY is set in your .env file.');
+      console.error('OpenAI API key not found.');
       setResponse(translations[language]?.apiKeyError || translations.English.apiKeyError);
       setLoading(false);
+      setProfileDialogOpen(true); // Open profile dialog to prompt for API key
       return;
     }
 
@@ -472,6 +493,20 @@ function App() {
                       variant="outlined"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
+                      sx={{ mb: 2 }}
+                    />
+                    
+                    {/* API Key Field */}
+                    <TextField
+                      margin="dense"
+                      id="apiKey"
+                      label={translations[language]?.apiKeyLabel || "OpenAI API Key"}
+                      type="password"
+                      fullWidth
+                      variant="outlined"
+                      value={userApiKey}
+                      onChange={(e) => setUserApiKey(e.target.value)}
+                      helperText={translations[language]?.apiKeyHelperText || "Your API key is stored locally and never sent to our servers"}
                       sx={{ mb: 2 }}
                     />
                     
