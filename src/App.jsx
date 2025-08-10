@@ -244,7 +244,15 @@ function App() {
       return;
     }
 
-    let promptContent = `The user's opinion is: "${text}". Please respond in ${selectedLang}. `;
+    // Map language codes to full language names for clearer AI instructions
+    const languageMap = {
+      'English': 'English',
+      'French': 'French (Français)',
+      'Spanish': 'Spanish (Español)'
+    };
+    const targetLanguage = languageMap[selectedLang] || 'English';
+    
+    let promptContent = `The user's opinion is: "${text}". IMPORTANT: You must provide your entire response in ${targetLanguage}. Do not use any other language. `;
     if (selectedMode === 'reinforce') {
       promptContent += 'Please provide points that reinforce this opinion and explain why it might be valid.';
     } else if (selectedMode === 'challenge') {
@@ -265,7 +273,7 @@ function App() {
       const apiResponse = await apiClient.post('/chat/completions', {
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: 'You are a helpful assistant that analyzes user opinions.' },
+          { role: 'system', content: `You are a helpful assistant that analyzes user opinions. You must always respond in ${targetLanguage}. Never mix languages in your response.` },
           { role: 'user', content: promptContent }
         ]
       });

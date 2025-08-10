@@ -8,7 +8,7 @@ import { translations } from '../translations';
 const OpinionInput = ({ onSubmitWithMode, opinionText, onOpinionChange, selectedLanguage }) => {
   const handleModeSubmit = (mode) => {
     if (opinionText.trim()) {
-      onSubmitWithMode(opinionText, mode);
+      onSubmitWithMode(opinionText, mode, selectedLanguage);
     }
   };
 
