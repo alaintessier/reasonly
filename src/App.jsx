@@ -4,13 +4,18 @@ import axios from 'axios'; // Import axios
 import { createTheme } from '@mui/material';
 // Other MUI imports from our barrel file
 import { ThemeProvider, CssBaseline, Container, Box, IconButton, Paper, Typography, 
-  responsiveFontSizes, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button } from './components/mui';
-import { AccountCircleIcon } from './components/mui';
+  responsiveFontSizes, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button, Menu, MenuItem } from './components/mui';
+import { AccountCircleIcon, LogoutIcon } from './components/mui';
 import { translations } from './translations'; // Import translations
 import OpinionInput from './components/OpinionInput';
 // ModeSelector is no longer needed
 import ResponseDisplay from './components/ResponseDisplay';
 import OpinionLogDisplay from './components/OpinionLogDisplay'; // Import the new component
+
+// Import authentication components
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import Login from './components/Login';
+import { supabase } from './lib/supabase';
 
 // Import the logo
 import reasonlyLogo from './assets/reasonly2.png';
@@ -21,39 +26,30 @@ import './App.css';
 
 
 function App() {
+  const { user, userProfile, signOut, updateProfile } = useAuth();
   const [step, setStep] = useState('input');
   const [opinion, setOpinion] = useState('');
   const [mode, setMode] = useState(null); // 'reinforce', 'challenge', 'neutral'
   const [language, setLanguage] = useState('English'); // Default language
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  
   // Profile state variables
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
-  const [userName, setUserName] = useState(() => {
-    try {
-      return localStorage.getItem('reasonlyUserName') || '';
-    } catch (error) {
-      console.error("Failed to load user name from localStorage:", error);
-      return '';
+  const [userName, setUserName] = useState('');
+  const [userPreferredLanguage, setUserPreferredLanguage] = useState('English');
+  const [userApiKey, setUserApiKey] = useState('');
+  
+  // Initialize from user profile when it loads
+  useEffect(() => {
+    if (userProfile) {
+      setUserName(userProfile.first_name || '');
+      setUserPreferredLanguage(userProfile.language || 'English');
+      setLanguage(userProfile.language || 'English');
+      setUserApiKey(userProfile.openai_api_key || '');
     }
-  });
-  const [userPreferredLanguage, setUserPreferredLanguage] = useState(() => {
-    try {
-      return localStorage.getItem('reasonlyUserLanguage') || 'English';
-    } catch (error) {
-      console.error("Failed to load user language preference from localStorage:", error);
-      return 'English';
-    }
-  });
-  // API Key state
-  const [userApiKey, setUserApiKey] = useState(() => {
-    try {
-      return localStorage.getItem('reasonlyApiKey') || '';
-    } catch (error) {
-      console.error('Error reading API key from localStorage:', error);
-      return '';
-    }
-  });
+  }, [userProfile]);
 
   const [opinionLog, setOpinionLog] = useState(() => {
     try {
@@ -428,13 +424,13 @@ function App() {
               />
             </Box>
             
-            {/* Profile Button on the right */}
+            {/* Settings Button on the right */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              {/* Profile Button */}
+              {/* Settings Button */}
               <IconButton 
                 color="primary" 
-                onClick={() => setProfileDialogOpen(true)}
-                title={translations[language]?.profileSettings || "Profile Settings"}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                title="Settings"
                 sx={{ 
                   border: '1px solid', 
                   borderColor: 'primary.main',
@@ -443,6 +439,65 @@ function App() {
               >
                 <AccountCircleIcon fontSize="medium" />
               </IconButton>
+              
+              {/* Settings Menu */}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 200
+                  }
+                }}
+              >
+                <MenuItem disabled sx={{ fontSize: '0.85rem', opacity: 0.7, pb: 1 }}>
+                  {user?.email}
+                </MenuItem>
+                <MenuItem 
+                  onClick={() => {
+                    setAnchorEl(null);
+                    setProfileDialogOpen(true);
+                  }}
+                  sx={{ 
+                    fontSize: '0.95rem',
+                    py: 1.2,
+                    '&:hover': {
+                      backgroundColor: 'primary.light'
+                    }
+                  }}
+                >
+                  <AccountCircleIcon fontSize="small" sx={{ mr: 1.5 }} />
+                  Profile Settings
+                </MenuItem>
+                <MenuItem 
+                  onClick={async () => {
+                    setAnchorEl(null);
+                    await signOut();
+                  }}
+                  sx={{ 
+                    fontSize: '0.95rem',
+                    py: 1.2,
+                    color: 'error.main',
+                    '&:hover': {
+                      backgroundColor: 'error.light',
+                      color: 'white'
+                    }
+                  }}
+                >
+                  <LogoutIcon fontSize="small" sx={{ mr: 1.5 }} />
+                  Logout
+                </MenuItem>
+              </Menu>
               
               {/* Custom Profile Modal */}
               {profileDialogOpen && (

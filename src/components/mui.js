@@ -26,6 +26,8 @@ export { default as DialogActions } from '@mui/material/DialogActions'; // Added
 export { default as DialogContent } from '@mui/material/DialogContent'; // Added for profile dialog
 export { default as DialogContentText } from '@mui/material/DialogContentText'; // Added for profile dialog
 export { default as DialogTitle } from '@mui/material/DialogTitle'; // Added for profile dialog
+export { default as Alert } from '@mui/material/Alert'; // Added for login alerts
+export { default as Link } from '@mui/material/Link'; // Added for login links
 
 // Theme related
 export { ThemeProvider } from '@mui/material/styles';
@@ -43,3 +45,4 @@ export { default as FactCheckIcon } from '@mui/icons-material/FactCheck';
 export { default as PsychologyIcon } from '@mui/icons-material/Psychology';
 export { default as LanguageIcon } from '@mui/icons-material/Language';
 export { default as AccountCircleIcon } from '@mui/icons-material/AccountCircle';
+export { default as LogoutIcon } from '@mui/icons-material/Logout';
